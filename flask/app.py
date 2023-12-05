@@ -183,13 +183,14 @@ def search_pdf():
         return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
 
 # Serve React App
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != '' and os.path.exists('pdf_reader/build/' + path):
-        return send_from_directory('pdf_reader/build', path)
-    else:
-        return send_from_directory('pdf_reader/build', 'index.html')
+@app.route('/')
+def serve():
+    return send_from_directory('https://github.com/thehelpfultipper/pinkpanda_pdf/tree/gh-pages', 'index.html')
+
+# Additional route to serve static files
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('https://github.com/thehelpfultipper/pinkpanda_pdf/tree/gh-pages', filename)
     
     
 if __name__ == "__main__":
