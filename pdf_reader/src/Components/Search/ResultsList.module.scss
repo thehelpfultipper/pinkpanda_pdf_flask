@@ -1,0 +1,20 @@
+.results_card {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+
+    .results_wrapper {
+        max-height: 800px;
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        .results_container {
+            list-style-type: none;
+            margin: 0;
+            padding: 15px 0 0;
+        }
+    }
+
+    .overflow {
+        overflow-y: scroll;
+    }
+}

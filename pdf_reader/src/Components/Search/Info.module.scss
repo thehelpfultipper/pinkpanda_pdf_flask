@@ -1,0 +1,15 @@
+.Info_wrap {
+    background: lightgreen;
+    padding: .2rem 1rem;
+    margin-top: 2rem;
+
+    &.error {
+        color: #fff;
+        font-weight: 700;
+        background: lightcoral;
+    }
+
+    p {
+        font-size: large;
+    }
+}

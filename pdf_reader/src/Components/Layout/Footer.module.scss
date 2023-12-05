@@ -1,0 +1,17 @@
+.wrapper {
+    // width: 100%;
+    color: white;
+    // padding: 5px;
+    font-size: 20px;
+
+    .tht {
+        margin-bottom: 40px;
+        @media (max-width: 320px) {
+            font-size: 15px;
+        }
+    }
+
+    .link {
+        color: var(--theme-pink);
+    }
+}
