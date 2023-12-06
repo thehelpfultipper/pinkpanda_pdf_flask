@@ -18,7 +18,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-venv_path = sys.prefix
+venv_path = os.path.dirname(sys.executable)
 tesseract_path = os.path.join(venv_path, "bin", "tesseract")
 pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
