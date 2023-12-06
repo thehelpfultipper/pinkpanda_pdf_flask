@@ -9,7 +9,13 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-app.config['UPLOAD_FOLDER'] = 'assets'
+
+# Set absolute path for assets folder
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'assets')
+
+# Ensure the upload folder exists
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Specify the path to the Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
