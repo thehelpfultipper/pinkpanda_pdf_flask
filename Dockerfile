@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y tesseract-ocr
 EXPOSE 5000
 
 # Set the Tesseract environment variable
-ENV TESSDATA_PREFIX /usr/local/bin/tesseract
+ENV TESSDATA_PREFIX /usr/local/bin
 
 # Check Tesseract is installed
 RUN tesseract --version
