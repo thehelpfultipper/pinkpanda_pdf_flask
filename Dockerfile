@@ -17,7 +17,7 @@ COPY . .
 RUN apt-get update && apt-get install -y tesseract-ocr
 
 # Expose the port that your Flask app will run on
-EXPOSE 10000
+EXPOSE 5000
 
 # Set the Tesseract environment variable
 ENV TESSDATA_PREFIX /usr/share/tesseract-ocr/4.00/tessdata
