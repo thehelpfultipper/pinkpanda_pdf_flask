@@ -1,14 +1,26 @@
-FROM python:3.9-slim-buster
+# Use the official Python image as a base image
+FROM python:3.8-slim
 
-RUN apt-get update && \
-    apt-get -qq -y install tesseract-ocr && \
-    apt-get -qq -y install libtesseract-dev
-
+# Set the working directory to /app
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+# Copy only the necessary files for installing dependencies
+COPY requirements.txt .
 
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
 COPY . .
 
-CMD ["gunicorn", "app:app"]
+# Install Tesseract
+RUN apt-get update && apt-get install -y tesseract-ocr
+
+# Expose the port that your Flask app will run on
+EXPOSE 10000
+
+# Set the Tesseract environment variable
+ENV TESSDATA_PREFIX /usr/share/tesseract-ocr/4.00/tessdata
+
+# Start the Flask app
+CMD ["python3", "app.py"]

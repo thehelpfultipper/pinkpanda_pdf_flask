@@ -1,0 +1,4 @@
+services:
+  - name: pink-panda-pdf
+    buildCommand: docker build -t pinkpanda-pdf .
+    startCommand: docker run -p 8080:10000 -e PORT=10000 pinkpanda-pdf
