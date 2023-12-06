@@ -10,6 +10,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Add '/usr/local/bin' to the PATH
+os.environ['PATH'] = '/usr/local/bin:' + os.environ['PATH']
+
 print(os.environ['PATH'])
 
 # Set absolute path for assets folder
