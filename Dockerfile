@@ -24,7 +24,7 @@ RUN echo $PATH
 EXPOSE 5000
 
 # Set the Tesseract environment variable
-ENV TESSDATA_PREFIX /usr/local/bin
+ENV TESSDATA_PREFIX /usr/local/Cellar/tesseract/5.3.3/share
 
 
 
