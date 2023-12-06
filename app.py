@@ -85,9 +85,6 @@ def search_pdf():
         pdf_path = request.files['pdfPath'].read()
         search_phrase = request.form['searchPhrase']
 
-        # TESTING GET ROUTE FOR CORRECT DATA POST #
-        # pdf_path = '/Users/KMerkuri/Downloads/Ellen _Lupton_Thinking.pdf'
-        # search_phrase = 'with the rise'
         if search_phrase:
             print(search_phrase)
             # Check asset folder exists & isn't empty
@@ -108,16 +105,19 @@ def search_pdf():
         screenshots = []  # Stores screenshot file paths
 
         pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
-        
+        print(pdf_document)
         for page_number in range(pdf_document.page_count):
             page = pdf_document.load_page(page_number)
+            print(page)
             try:
                 text = page.get_text()
-
+                print('extracting')
                 # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
                 if not text.strip():
+                    print('ocr extract')
                     text = process_page_with_ocr(page)
             except Exception as e:
+                print(e)
                 return jsonify({'error': 'Error parsing PDF'}), 500
 
             # Initialize a flag to check if a match is found
