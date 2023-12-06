@@ -81,7 +81,7 @@ def process_page_with_ocr(page):
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
-    return send_from_directory('assets', filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route("/search-pdf", methods=["POST"])
 def search_pdf():
@@ -96,10 +96,10 @@ def search_pdf():
         if search_phrase:
             print(search_phrase)
             # Check asset folder exists & isn't empty
-            if os.path.exists(os.path.join(app.root_path, 'assets')) and os.listdir(os.path.join(app.root_path, 'assets')):
+            if os.path.exists(app.config['UPLOAD_FOLDER']) and os.listdir(app.config['UPLOAD_FOLDER']):
                 # Clear assets folder
                 try:
-                    for root, dirs, files in os.walk(os.path.join(app.root_path, 'assets')):
+                    for root, dirs, files in os.walk(app.config['UPLOAD_FOLDER']):
                         for file in files:
                             file_path = os.path.join(root, file)
                             os.remove(file_path)
@@ -160,7 +160,7 @@ def search_pdf():
 
             # Generate unique filename for each screenshot
             screenshot_filename = f"match_page_{match_page_number + 1}.png"
-            screenshot_filepath = os.path.join('assets/' + screenshot_filename)
+            screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
 
             draw = ImageDraw.Draw(screenshot)
             text_instances = []
@@ -170,13 +170,13 @@ def search_pdf():
             else:
                 text_instances_ocr = process_page_with_ocr(page)
            
-            screenshot.save('assets/' + screenshot_filename)
+            screenshot.save(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
             # Highlight near matches in the screenshot
             if len(text_instances) > 0:
                 for inst in text_instances:
                     x0, y0, x1, y1 = inst
                     draw.rectangle([x0, y0, x1, y1], outline="red")
-                screenshot.save('assets/' + screenshot_filename)
+                screenshot.save(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
             elif text_instances_ocr:
                 highlight_exact_matches(screenshot_filepath, search_phrase, text_instances_ocr)
             else:
