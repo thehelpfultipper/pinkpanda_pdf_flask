@@ -160,7 +160,7 @@ def search_pdf():
 
             # Generate unique filename for each screenshot
             screenshot_filename = f"match_page_{match_page_number + 1}.png"
-            screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
+            screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
 
             draw = ImageDraw.Draw(screenshot)
             text_instances = []
@@ -170,13 +170,13 @@ def search_pdf():
             else:
                 text_instances_ocr = process_page_with_ocr(page)
            
-            screenshot.save(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
+            screenshot.save(screenshot_filepath)
             # Highlight near matches in the screenshot
             if len(text_instances) > 0:
                 for inst in text_instances:
                     x0, y0, x1, y1 = inst
                     draw.rectangle([x0, y0, x1, y1], outline="red")
-                screenshot.save(app.config['UPLOAD_FOLDER'] + '/' + screenshot_filename)
+                screenshot.save(screenshot_filepath)
             elif text_instances_ocr:
                 highlight_exact_matches(screenshot_filepath, search_phrase, text_instances_ocr)
             else:
