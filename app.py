@@ -10,6 +10,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+print(os.environ['PATH'])
+
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getenv('RENDER_BASE_PATH', ''), 'assets')
 # Ensure the upload folder exists
