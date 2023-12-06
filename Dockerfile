@@ -22,5 +22,10 @@ EXPOSE 5000
 # Set the Tesseract environment variable
 ENV TESSDATA_PREFIX /usr/share/tesseract-ocr/4.00/tessdata
 
+# Check Tesseract is installed
+RUN tesseract --version
+
+RUN echo $PATH
+
 # Start the Flask app
 CMD ["python3", "app.py"]
