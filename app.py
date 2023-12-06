@@ -11,8 +11,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Set absolute path for assets folder
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'assets')
-print(app.config['UPLOAD_FOLDER'])
+print(ROOT_DIR)
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
