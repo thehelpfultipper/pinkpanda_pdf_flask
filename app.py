@@ -12,7 +12,7 @@ CORS(app)
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'assets')
-
+print(app.config['UPLOAD_FOLDER'])
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -161,7 +161,7 @@ def search_pdf():
             # Generate unique filename for each screenshot
             screenshot_filename = f"match_page_{match_page_number + 1}.png"
             screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
-
+            print(screenshot_filepath)
             draw = ImageDraw.Draw(screenshot)
             text_instances = []
             text_instances_ocr = ''
