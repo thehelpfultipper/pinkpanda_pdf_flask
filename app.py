@@ -54,11 +54,7 @@ def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
                     
                     if text.lower() == near_match_word.lower():
                         left, top, width, height = word_boxes['left'][j], word_boxes['top'][j], word_boxes['width'][j], word_boxes['height'][j]
-                        # Ensure that the index 'j' corresponds to the same text in the OCR output
-                        # if j < len(near_match_word):
-                        #     print(f"Text: {text}, Coordinates: ({word_boxes['left'][j]}, {word_boxes['top'][j]}, {word_boxes['width'][j]}, {word_boxes['height'][j]})")
-                        # else:
-                        #     print(f"Index {j} exceeds OCR text length. Check alignment.")
+                        
                         # Draw a red outline around the matching word
                         draw.rectangle([left, top, left + width, top + height], outline="red")
 
@@ -186,17 +182,6 @@ def search_pdf():
         pdf_document.close()
 
         return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
-
-# Serve React App
-@app.route('/')
-def serve():
-    return send_from_directory('https://github.com/thehelpfultipper/pinkpanda_pdf/tree/gh-pages', 'index.html')
-
-# Additional route to serve static files
-@app.route('/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('https://github.com/thehelpfultipper/pinkpanda_pdf/tree/gh-pages', filename)
-    
     
 if __name__ == "__main__":
     app.run(debug=True)
