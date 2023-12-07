@@ -10,11 +10,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Add '/usr/local/bin' to the PATH
-os.environ['PATH'] = '/usr/local/bin:' + os.environ['PATH']
-
-print(os.environ['PATH'])
-
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getenv('RENDER_BASE_PATH', ''), 'assets')
 # Ensure the upload folder exists
@@ -23,6 +18,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
+os.environ['TESSDATA_PREFIX'] = '/usr/local/Cellar/tesseract/5.3.3/share'
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
