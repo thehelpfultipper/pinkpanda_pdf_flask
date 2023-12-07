@@ -19,8 +19,5 @@ ENV TESSDATA_PREFIX=/usr/local/Cellar/tesseract/5.3.3
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
-# Define environment variable
-ENV NAME World
-
 # Run app.py when the container launches
 CMD ["python3", "app.py"]

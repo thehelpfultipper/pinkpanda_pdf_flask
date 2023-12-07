@@ -4,6 +4,7 @@ services:
   # A Docker web service
   - type: web
     runtime: docker
+    dockerfilePath: ./Dockerfile
     name: pinkpanda-pdf-flask
     buildCommand: docker build -t pinkpanda-pdf-flask .
     startCommand: docker run -p 10000:80 pinkpanda-pdf-flask
