@@ -1,5 +1,4 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.9-slim-buster
 
 # Set the working directory to /app
 WORKDIR /app
@@ -11,8 +10,10 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Tesseract
-RUN apt-get update && apt-get install -y tesseract
-
+RUN apt-get update && \
+    apt-get -qq -y install tesseract-ocr && \
+    apt-get -qq -y install libtesseract-dev
+    
 # Set the environment variable for Tesseract path
 ENV TESSDATA_PREFIX=/usr/local/Cellar/tesseract/5.3.3
 
