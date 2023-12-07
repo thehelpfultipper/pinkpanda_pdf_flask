@@ -1,10 +1,16 @@
 # render.yaml
 
 services:
-  # A Docker web service
   - type: web
-    runtime: docker
-    dockerfilePath: ./Dockerfile
     name: pinkpanda-pdf-flask
-    buildCommand: docker build -t pinkpanda-pdf-flask .
-    startCommand: docker run -p 10000:80 pinkpanda-pdf-flask
+    env: python
+    buildCommand: python3 -m pip install -r requirements.txt
+    startCommand: gunicorn -b :$PORT app:app
+    healthCheckPath: /healthcheck
+    healthCheckPort: $PORT
+
+build:
+  - command: |
+      apt-get update && \
+      apt-get install -y tesseract-ocr-eng && \
+      export TESSDATA_PREFIX=/usr/local/Cellar/tesseract/5.3.3
