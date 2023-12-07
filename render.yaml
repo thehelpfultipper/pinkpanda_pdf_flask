@@ -1,4 +1,6 @@
 services:
-  - name: pink-panda-pdf
+  - type: web
+    name: pinkpanda-pdf-flask
+    runtime: docker
     buildCommand: docker build -t pinkpanda-pdf .
     startCommand: docker run -p 10000:5000 -e PORT=5000 pinkpanda-pdf

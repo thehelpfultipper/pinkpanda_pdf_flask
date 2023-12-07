@@ -14,11 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Install Tesseract
-RUN apt-get update && apt-get install -y tesseract-ocr
-# Check Tesseract is installed
-RUN tesseract --version
-
-RUN echo $PATH
+RUN apt-get update && \ 
+    apt-get install -y tesseract-ocr && \
+    tesseract --version && \
+    echo $PATH
 
 # Expose the port that your Flask app will run on
 EXPOSE 5000
