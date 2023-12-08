@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, send_from_directory
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 from flask_cors import CORS
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -19,13 +20,20 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Specify the path to the Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/.venv/lib/python3.11/site-packages/tesseract'
-print("Environment Variables:")
-for key, value in os.environ.items():
-    print(f"{key}: {value}")
+# Print the current working directory
+print("Current working directory:", os.getcwd())
 
-    # Print the Tesseract executable path
-tesseract_path = os.popen("which tesseract").read().strip()
-print(f"Tesseract Executable Path: {tesseract_path}")
+# Run a command to list the contents of the current directory
+list_directory_command = "ls -la"
+list_directory_output = subprocess.check_output(list_directory_command, shell=True, universal_newlines=True)
+print("Contents of current directory:")
+print(list_directory_output)
+
+# Print the path to the Tesseract executable
+tesseract_path_command = "which tesseract"
+tesseract_path_output = subprocess.check_output(tesseract_path_command, shell=True, universal_newlines=True)
+print("Path to Tesseract executable:")
+print(tesseract_path_output)
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
