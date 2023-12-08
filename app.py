@@ -131,7 +131,7 @@ def search_pdf():
             # Process the text content dynamically (replace this with your data source)
             # In this example, we split the text into words and process each word
             words = text.split()
-            print(words)
+           
             for word in words:
                 # Calculate the similarity score between search_phrase and the word
                 similarity_score = fuzz.partial_ratio(search_phrase, word)
@@ -148,6 +148,7 @@ def search_pdf():
 
         # if there's nothing in matches array, stop execution and print no matches found
         if not matches:
+           print('no matches')
            return jsonify({'error': 'No matches found'}), 500     
         
         for match_page_number, match_text in matches:
@@ -190,4 +191,4 @@ def search_pdf():
         return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
     
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run(debug=True)
