@@ -124,7 +124,7 @@ def search_pdf():
                    try:
                        text = process_page_with_ocr(page)
                    except Exception as e:
-                       print('ocr error -- ' + e)
+                       print(f"Tesseract not found. Please ensure it's installed. Details: {e}")
             except Exception as e:
                 print(e)
                 return jsonify({'error': 'Error parsing PDF'}), 500
