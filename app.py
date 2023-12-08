@@ -144,13 +144,14 @@ def search_pdf():
                     break  # Stop searching once a match is found
 
             if match_found:
+                print('match found')
                 matches.append((page_number, text))
 
         # if there's nothing in matches array, stop execution and print no matches found
         if not matches:
            print('no matches')
            return jsonify({'error': 'No matches found'}), 500     
-        
+        print(matches)
         for match_page_number, match_text in matches:
             page = pdf_document.load_page(match_page_number)
             img = page.get_pixmap()
