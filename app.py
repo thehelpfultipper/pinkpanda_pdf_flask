@@ -21,6 +21,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/tessdata/5.3.3/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
+print({key: os.environ[key] for key in os.environ})
 
 directory_path = os.getcwd()
 directory_contents = os.listdir(directory_path)
