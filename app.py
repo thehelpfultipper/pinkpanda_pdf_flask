@@ -29,9 +29,9 @@ list_directory_output = subprocess.check_output(list_directory_command, shell=Tr
 print("Contents of current directory:")
 print(list_directory_output)
 
-# Print the path to the Tesseract executable
-tesseract_path_command = "which tesseract"
-tesseract_path_output = subprocess.check_output(tesseract_path_command, shell=True, universal_newlines=True)
+# Find the path to the Tesseract executable
+find_tesseract_command = "find / -type f -name tesseract 2>/dev/null"
+tesseract_path_output = subprocess.check_output(find_tesseract_command, shell=True, universal_newlines=True)
 print("Path to Tesseract executable:")
 print(tesseract_path_output)
 
