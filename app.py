@@ -19,7 +19,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Specify the path to the Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/.venv/lib/python3.11/site-packages/tesseract'
-directory_path = "/opt/render/project/src/"
+directory_path = "/opt/render/project/src/.venv/"
 directory_contents = os.listdir(directory_path)
 print("Contents of {}: {}".format(directory_path, directory_contents))
 
