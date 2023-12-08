@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins='*')
+CORS(app)
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = 'https://pinkpandapdf-9v69y74n.b4a.run/assets'
@@ -20,6 +20,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
+
+directory_path = os.getcwd()
+directory_contents = os.listdir(directory_path)
+print("Contents of {}: {}".format(directory_path, directory_contents))
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
@@ -192,4 +196,4 @@ def search_pdf():
         return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
     
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True)
