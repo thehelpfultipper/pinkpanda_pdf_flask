@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = os.getcwd() + 'assets'
+app.config['UPLOAD_FOLDER'] = 'https://pinkpandapdf-9v69y74n.b4a.run/assets'
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -131,6 +131,7 @@ def search_pdf():
             # Process the text content dynamically (replace this with your data source)
             # In this example, we split the text into words and process each word
             words = text.split()
+            print(words)
             for word in words:
                 # Calculate the similarity score between search_phrase and the word
                 similarity_score = fuzz.partial_ratio(search_phrase, word)
