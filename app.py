@@ -17,8 +17,9 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Specify the path to the Tesseract executable
-pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/.venv/lib/python3.11/site-packages/pytesseract'
+# pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/.venv/bin/pytesseract'
+print('Current working dir: ' + os.getcwd())
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
@@ -119,6 +120,7 @@ def search_pdf():
                        text = process_page_with_ocr(page)
                    except Exception as e:
                        print(e)
+                       return jsonify({'warning': 'OCR page needs special processsing'}), 200
             except Exception as e:
                 print(e)
                 return jsonify({'error': 'Error parsing PDF'}), 500
