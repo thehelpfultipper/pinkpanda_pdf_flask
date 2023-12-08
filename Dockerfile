@@ -6,7 +6,11 @@ WORKDIR /app
 
 # Copy requirements file and install dependencies
 COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+
+RUN apt-get update && \
+    apt-get install -y tesseract-ocr && \
+    apt-get install -y libtesseract-dev && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project files
 COPY . .

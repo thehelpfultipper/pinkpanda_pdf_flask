@@ -18,7 +18,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = 'https://pinkpandapdf-9v69y74n.b4a.run/tessdata/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/bin/tesseract'
 
 print("Current working directory:", os.getcwd())
 
