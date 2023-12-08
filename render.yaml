@@ -1,0 +1,10 @@
+# render.yaml
+
+services:
+  - type: web
+    name: pinkpanda-pdf
+    buildCommand: ./setup.sh && gunicorn -b 0.0.0.0:$PORT app:app
+    envVars:
+      - key: TESSDATA_PREFIX
+        scope: RUN_ONCE
+        value: /usr/local/Cellar/tesseract/5.3.3
