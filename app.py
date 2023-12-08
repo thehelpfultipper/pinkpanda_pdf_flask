@@ -1,7 +1,7 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, subprocess
+import os, shutil
 from flask import Flask, request, jsonify, send_from_directory
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
@@ -22,12 +22,11 @@ pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = '/opt/render/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
 
-# Find the path to the Tesseract executable
-find_tesseract_command = "which tesseract"
-# Set the environment variable explicitly
-tesseract_path_output = subprocess.check_output(find_tesseract_command, shell=True, env=os.environ, universal_newlines=True)
-print("Path to Tesseract executable:")
-print(tesseract_path_output)
+tesseract_path = shutil.which("tesseract")
+if tesseract_path:
+    print("Path to Tesseract executable:", tesseract_path)
+else:
+    print("Tesseract executable not found in PATH.")
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
