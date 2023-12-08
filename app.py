@@ -18,7 +18,8 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = 'tessdata/5.3.3/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
 
 directory_path = os.getcwd()
@@ -114,7 +115,6 @@ def search_pdf():
 
         for page_number in range(pdf_document.page_count):
             page = pdf_document.load_page(page_number)
-            print('in page search')
             try:
                 text = page.get_text()
                 print('nonocr')
@@ -148,14 +148,12 @@ def search_pdf():
                     break  # Stop searching once a match is found
 
             if match_found:
-                print('match found')
                 matches.append((page_number, text))
 
         # if there's nothing in matches array, stop execution and print no matches found
         if not matches:
-           print('no matches')
            return jsonify({'error': 'No matches found'}), 500     
-        print(matches)
+
         for match_page_number, match_text in matches:
             page = pdf_document.load_page(match_page_number)
             img = page.get_pixmap()
@@ -164,7 +162,6 @@ def search_pdf():
             height = img.height
 
             screenshot = Image.frombytes("RGB", [width, height], img.samples)
-            print('building image match')
             # Generate unique filename for each screenshot
             screenshot_filename = f"match_page_{match_page_number + 1}.png"
             screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
