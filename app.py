@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = 'https://pinkpandapdf-9v69y74n.b4a.run/assets'
+app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf-flask.onrender.com/assets'
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
