@@ -19,7 +19,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = 'tessdata/5.3.3/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/opt/render/project/src/tessdata/5.3.3/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
 
 directory_path = os.getcwd()
@@ -69,16 +69,19 @@ def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     img.save(screenshot, format="PNG")
 
 def process_page_with_ocr(page):
-    # Convert the page to an image using PyMuPDF
-    image = page.get_pixmap()
+    try:
+        # Convert the page to an image using PyMuPDF
+        image = page.get_pixmap()
 
-    # Convert the image to a format that can be processed by pytesseract
-    image_pil = Image.frombytes("RGB", (image.width, image.height), image.samples)
+        # Convert the image to a format that can be processed by pytesseract
+        image_pil = Image.frombytes("RGB", (image.width, image.height), image.samples)
 
-    # Use pytesseract to perform OCR on the image
-    ocr_text = pytesseract.image_to_string(image_pil, lang='eng')
+        # Use pytesseract to perform OCR on the image
+        ocr_text = pytesseract.image_to_string(image_pil, lang='eng')
 
-    return ocr_text                                            
+        return ocr_text  
+    except Exception as e:
+        print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
 @app.route('/assets/<filename>')
 def serve_image(filename):
@@ -124,7 +127,7 @@ def search_pdf():
                    try:
                        text = process_page_with_ocr(page)
                    except Exception as e:
-                       print(f"Tesseract not found. Please ensure it's installed. Details: {e}")
+                       print(f"OCR: {e}"), 200
             except Exception as e:
                 print(e)
                 return jsonify({'error': 'Error parsing PDF'}), 500
