@@ -18,7 +18,8 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+# pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
@@ -115,11 +116,7 @@ def search_pdf():
                
                 # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
                 if not text.strip():
-                   try:
-                       text = process_page_with_ocr(page)
-                   except Exception as e:
-                       print(e)
-                    #    return jsonify({'warning': 'OCR page needs special processsing'}), 200
+                   text = process_page_with_ocr(page)
             except Exception as e:
                 print(e)
                 return jsonify({'error': 'Error parsing PDF'}), 500
