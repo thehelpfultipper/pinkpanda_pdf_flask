@@ -1,7 +1,7 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, sys
+import os, subprocess
 from flask import Flask, request, jsonify, send_from_directory
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
@@ -18,9 +18,21 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = '/tessdata/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = 'https://pinkpandapdf-9v69y74n.b4a.run/tessdata/bin/tesseract'
 
-print(sys.path)
+print("Current working directory:", os.getcwd())
+
+# Run a command to list the contents of the current directory
+list_directory_command = "ls -la"
+list_directory_output = subprocess.check_output(list_directory_command, shell=True, universal_newlines=True)
+print("Contents of current directory:")
+print(list_directory_output)
+
+# Find the path to the Tesseract executable
+find_tesseract_command = "find / -type f -name tesseract 2>/dev/null"
+tesseract_path_output = subprocess.check_output(find_tesseract_command, shell=True, universal_newlines=True)
+print("Path to Tesseract executable:")
+print(tesseract_path_output)
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
