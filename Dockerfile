@@ -17,7 +17,7 @@ RUN apt-get update && \
 COPY . .
 
 # Expose the server port
-EXPOSE 8080
+EXPOSE 10000
 
 # Command to start the server
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:10000", "app:app"]
