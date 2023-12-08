@@ -17,7 +17,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Specify the path to the Tesseract executable
-tesseract_cmd = os.getenv('TESSERACT_CMD', 'tesseract')
+tesseract_cmd = os.getenv('TESSERACT_CMD', 'usr/local/bin/tesseract')
 pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
