@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = 'assets'
+app.config['UPLOAD_FOLDER'] = os.getcwd() + 'assets'
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -157,7 +157,7 @@ def search_pdf():
             height = img.height
 
             screenshot = Image.frombytes("RGB", [width, height], img.samples)
-
+            print('building image match')
             # Generate unique filename for each screenshot
             screenshot_filename = f"match_page_{match_page_number + 1}.png"
             screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
