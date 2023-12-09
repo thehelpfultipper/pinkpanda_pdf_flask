@@ -156,7 +156,7 @@ def search_pdf():
 
             # if there's nothing in matches array, stop execution and print no matches found
             if not matches:
-            return jsonify({'error': 'No matches found'}), 500     
+                return jsonify({'error': 'No matches found'}), 500     
 
             for match_page_number, match_text in matches:
                 page = pdf_document.load_page(match_page_number)
