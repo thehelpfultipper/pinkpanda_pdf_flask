@@ -190,7 +190,7 @@ def search_pdf():
         return build_actual_response(jsonify({"matches": matches, "screenshots": screenshots})) # {matches:[[num, "cont"]], screenshots:[""]}
 
 def build_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Origin", "https://thehelpfultipper.github.io/")
     return response
  
 if __name__ == "__main__":
