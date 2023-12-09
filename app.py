@@ -187,7 +187,11 @@ def search_pdf():
 
         pdf_document.close()
 
-        return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
-    
+        return build_actual_response(jsonify({"matches": matches, "screenshots": screenshots})) # {matches:[[num, "cont"]], screenshots:[""]}
+
+def build_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+ 
 if __name__ == "__main__":
     app.run(debug=True, port=10000)
