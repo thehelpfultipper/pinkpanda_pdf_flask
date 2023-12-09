@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["https://thehelpfultipper.github.io/"])
+CORS(app)
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
@@ -190,7 +190,7 @@ def search_pdf():
         return build_actual_response(jsonify({"matches": matches, "screenshots": screenshots})) # {matches:[[num, "cont"]], screenshots:[""]}
 
 def build_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "https://thehelpfultipper.github.io/")
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
  
 if __name__ == "__main__":
