@@ -77,12 +77,16 @@ def process_page_with_ocr(page):
     except Exception as e:
         print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
+@app.route('/')
+def home():
+    return 'Homepage!'
+
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route("/search-pdf", methods=["GET"])
+@app.route("/search-pdf", methods=["POST"])
 def search_pdf():
     if request.method == 'POST':
         # Parse request data to get PDF path & query term
@@ -190,4 +194,4 @@ def search_pdf():
         return jsonify({"matches": matches, "screenshots": screenshots}) # {matches:[[num, "cont"]], screenshots:[""]}
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=10000)
