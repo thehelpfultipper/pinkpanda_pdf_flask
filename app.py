@@ -11,22 +11,14 @@ app = Flask(__name__)
 CORS(app)
 
 # Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf-flask.onrender.com/assets'
+app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Specify the path to the Tesseract executable
-pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = '/opt/render/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = os.getcwd() + '/tessdata/5.3.3/bin/tesseract'
-
-tesseract_path = shutil.which("tesseract")
-if tesseract_path:
-    print("Path to Tesseract executable:", tesseract_path)
-else:
-    print("Tesseract executable not found in PATH.")
+# pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
