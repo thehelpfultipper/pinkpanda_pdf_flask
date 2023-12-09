@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
@@ -77,6 +77,12 @@ def process_page_with_ocr(page):
     except Exception as e:
         print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
+# Enable CORS for all routes
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return(response)
+
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
@@ -186,12 +192,14 @@ def search_pdf():
             screenshots.append(screenshot_filepath)
 
         pdf_document.close()
+        print('document closed')
+        print(jsonify({"matches": matches, "screenshots": screenshots}))
+        return jsonify({"matches": matches, "screenshots": screenshots})
+        # return build_actual_response(jsonify({"matches": matches, "screenshots": screenshots})) # {matches:[[num, "cont"]], screenshots:[""]}
 
-        return build_actual_response(jsonify({"matches": matches, "screenshots": screenshots})) # {matches:[[num, "cont"]], screenshots:[""]}
-
-def build_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+# def build_actual_response(response):
+#     response.headers.add("Access-Control-Allow-Origin", "*")
+#     return response
  
 if __name__ == "__main__":
     app.run(debug=True, port=10000)
