@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["*"])
+CORS(app, origins=["https://thehelpfultipper.github.io"])
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
