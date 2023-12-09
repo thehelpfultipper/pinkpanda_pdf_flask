@@ -77,10 +77,6 @@ def process_page_with_ocr(page):
     except Exception as e:
         print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
-@app.route('/')
-def home():
-    return 'Homepage!'
-
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
