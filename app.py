@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["https://thehelpfultipper.github.io"])
+CORS(app, origins=["https://thehelpfultipper.github.io/"])
 
 # Set absolute path for assets folder
 app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
@@ -82,7 +82,7 @@ def serve_image(filename):
     # Serve image from the specified directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route("/search-pdf", methods=["POST", "OPTIONS"])
+@app.route("/search-pdf", methods=["POST"])
 def search_pdf():
     if request.method == 'POST':
         # Parse request data to get PDF path & query term
