@@ -120,10 +120,7 @@ def search_pdf():
                     # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
                     if not text.strip():
                         print('ocr')
-                        try:
-                            text = process_page_with_ocr(page)
-                        except Exception as e:
-                            print(f"OCR: {e}")
+                        text = process_page_with_ocr(page)
                 except Exception as e:
                     print(e)
                     return jsonify({'error': 'Error parsing PDF'}), 500
