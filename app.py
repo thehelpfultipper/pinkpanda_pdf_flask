@@ -113,45 +113,45 @@ def search_pdf():
             pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
 
             for page_number in range(pdf_document.page_count):
-                    page = pdf_document.load_page(page_number)
-                    try:
-                        text = page.get_text()
-                        print('nonocr')
-                        # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
-                        if not text.strip():
-                            print('ocr')
-                            try:
-                                text = process_page_with_ocr(page)
-                            except Exception as e:
-                                print(f"OCR: {e}"), 200
-                    except Exception as e:
-                        print(e)
-                        return jsonify({'error': 'Error parsing PDF'}), 500
+                page = pdf_document.load_page(page_number)
+                try:
+                    text = page.get_text()
+                    print('nonocr')
+                    # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
+                    if not text.strip():
+                        print('ocr')
+                        try:
+                            text = process_page_with_ocr(page)
+                        except Exception as e:
+                            print(f"OCR: {e}")
+                except Exception as e:
+                    print(e)
+                    return jsonify({'error': 'Error parsing PDF'}), 500
 
-                    # Initialize a flag to check if a match is found
-                    match_found = False
+                # Initialize a flag to check if a match is found
+                match_found = False
 
-                    # Process the text content dynamically (replace this with your data source)
-                    # In this example, we split the text into words and process each word
-                    words = text.split()
+                # Process the text content dynamically (replace this with your data source)
+                # In this example, we split the text into words and process each word
+                words = text.split()
                 
-                    for word in words:
-                        # Calculate the similarity score between search_phrase and the word
-                        similarity_score = fuzz.partial_ratio(search_phrase, word)
+                for word in words:
+                    # Calculate the similarity score between search_phrase and the word
+                    similarity_score = fuzz.partial_ratio(search_phrase, word)
 
-                        # Set a minimum similarity score threshold (adjust as needed)
-                        min_similarity_score = 80
+                    # Set a minimum similarity score threshold (adjust as needed)
+                    min_similarity_score = 80
 
-                        if similarity_score >= min_similarity_score:
-                            match_found = True
-                            break  # Stop searching once a match is found
+                    if similarity_score >= min_similarity_score:
+                        match_found = True
+                        break  # Stop searching once a match is found
 
-                    if match_found:
-                        matches.append((page_number, text))
+                if match_found:
+                    matches.append((page_number, text))
 
-                # if there's nothing in matches array, stop execution and print no matches found
+            # if there's nothing in matches array, stop execution and print no matches found
             if not matches:
-                    return jsonify({'error': 'No matches found'}), 500     
+                return jsonify({'error': 'No matches found'}), 500     
 
             for match_page_number, match_text in matches:
                     page = pdf_document.load_page(match_page_number)
