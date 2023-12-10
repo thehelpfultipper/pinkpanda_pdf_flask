@@ -107,12 +107,12 @@ def search_pdf():
                     except Exception as e:
                         return jsonify({'error': f'Error clearing assets folder: {str(e)}'}), 500
 
-                matches = []  # Stores matched pages and text
-                screenshots = []  # Stores screenshot file paths
+            matches = []  # Stores matched pages and text
+            screenshots = []  # Stores screenshot file paths
 
-                pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
+            pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
 
-                for page_number in range(pdf_document.page_count):
+            for page_number in range(pdf_document.page_count):
                     page = pdf_document.load_page(page_number)
                     try:
                         text = page.get_text()
@@ -150,10 +150,10 @@ def search_pdf():
                         matches.append((page_number, text))
 
                 # if there's nothing in matches array, stop execution and print no matches found
-                if not matches:
+            if not matches:
                     return jsonify({'error': 'No matches found'}), 500     
 
-                for match_page_number, match_text in matches:
+            for match_page_number, match_text in matches:
                     page = pdf_document.load_page(match_page_number)
                     img = page.get_pixmap()
 
@@ -187,11 +187,11 @@ def search_pdf():
                     
                     screenshots.append(screenshot_filepath)
                 
-                print('document pre-close')
+            print('document pre-close')
 
-                pdf_document.close()
-                print('document closed')
-                return jsonify({"matches": matches, "screenshots": screenshots})
+            pdf_document.close()
+            print('document closed')
+            return jsonify({"matches": matches, "screenshots": screenshots})
         except Exception as e:
             # Log the exception details
             print(f"Exception: {e}")
