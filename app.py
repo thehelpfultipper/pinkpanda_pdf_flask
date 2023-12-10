@@ -121,6 +121,7 @@ def search_pdf():
                     if not text.strip():
                         print('ocr')
                         text = process_page_with_ocr(page)
+                        print(text)
                 except Exception as e:
                     print(e)
                     return jsonify({'error': 'Error parsing PDF'}), 500

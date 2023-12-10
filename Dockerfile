@@ -10,7 +10,6 @@ COPY requirements.txt requirements.txt
 RUN apt-get update && \
     apt-get install -y tesseract-ocr && \
     apt-get install -y libtesseract-dev && \
-    rm -rf /app/cache-directory && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project files
