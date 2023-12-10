@@ -17,7 +17,7 @@ RUN apt-get update && \
 COPY . .
 
 # Expose the server port
-EXPOSE 10000
+EXPOSE 5000
 
 # Command to start the server
-CMD ["gunicorn", "-b", "0.0.0.0:10000", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
