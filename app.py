@@ -83,7 +83,7 @@ def serve_image(filename):
     # Serve image from the specified directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route("/search-pdf", methods=["GET"])
+@app.route("/search-pdf", methods=["POST"])
 def search_pdf():
     if request.method == 'POST':
         try:
