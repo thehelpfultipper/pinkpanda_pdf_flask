@@ -1,7 +1,7 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, traceback
+import os, traceback, shutil
 from flask import Flask, request, jsonify, send_from_directory
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
@@ -19,6 +19,16 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Specify the path to the Tesseract executable
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
 pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+
+# Find the path to the Tesseract executable
+try:
+    tesseract_path = shutil.which("tesseract")
+    if tesseract_path:
+        print("Path to Tesseract executable:", tesseract_path)
+    else:
+        print("Tesseract executable not found.")
+except Exception as e:
+    print("Error:", str(e))
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
