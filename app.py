@@ -6,19 +6,22 @@ from flask import Flask, request, jsonify, send_from_directory
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["https://thehelpfultipper.github.io/pinkpanda_pdfs"])
+CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 
 # Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = 'https://pinkpanda-pdf.onrender.com/assets'
+app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH")
+
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Specify the path to the Tesseract executable
-# pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
 
 # Find the path to the Tesseract executable
 try:
@@ -195,10 +198,7 @@ def search_pdf():
                     
                     screenshots.append(screenshot_filepath)
                 
-            print('document pre-close')
-
             pdf_document.close()
-            print('document closed')
             return jsonify({"matches": matches, "screenshots": screenshots})
         except Exception as e:
             # Log the exception details
