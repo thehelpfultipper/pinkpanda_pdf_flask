@@ -11,17 +11,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 
-# Set absolute path for assets folder
-app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH")
+# Check env for correct variables
+if os.environ.get('RENDER') == 'true':
+    # Set absolute path for assets folder
+    app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH")
+    # Specify the path to the Tesseract executable
+    pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
+
+    CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
+else:
+    app.config['UPLOAD_FOLDER'] = 'assets'
+    pytesseract.pytesseract.tesseract_cmd = os.getenv("LOCAL_TESSERACT_PATH")
+    CORS(app)
 
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# Specify the path to the Tesseract executable
-pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
 
 # Find the path to the Tesseract executable
 try:
