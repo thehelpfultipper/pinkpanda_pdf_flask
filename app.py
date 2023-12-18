@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-
+print(os.environ.get('RENDER'))
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
     # Set absolute path for assets folder
