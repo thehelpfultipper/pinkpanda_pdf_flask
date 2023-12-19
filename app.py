@@ -7,11 +7,12 @@ import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 from flask_cors import CORS
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
 app = Flask(__name__)
-print(os.environ.get('RENDER'))
+
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
     # Set absolute path for assets folder
@@ -96,7 +97,7 @@ def process_page_with_ocr(page):
     except Exception as e:
         print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
-
+    
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
@@ -109,7 +110,7 @@ def search_pdf():
             # Parse request data to get PDF path & query term
             pdf_path = request.files['pdfPath'].read()
             search_phrase = request.form['searchPhrase']
-
+          
             if search_phrase:
                 print(search_phrase)
                 # Check asset folder exists & isn't empty
@@ -125,7 +126,7 @@ def search_pdf():
                                 os.rmdir(dir_path)
                     except Exception as e:
                         return jsonify({'error': f'Error clearing assets folder: {str(e)}'}), 500
-
+              
             matches = []  # Stores matched pages and text
             screenshots = []  # Stores screenshot file paths
 
@@ -179,7 +180,8 @@ def search_pdf():
 
                     screenshot = Image.frombytes("RGB", [width, height], img.samples)
                     # Generate unique filename for each screenshot
-                    screenshot_filename = f"match_page_{match_page_number + 1}.png"
+                    timestamp = int(datetime.now().timestamp())
+                    screenshot_filename = f"match_page_{match_page_number + 1}_{str(timestamp)}.png"
                     screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
                     print(screenshot_filepath)
                     draw = ImageDraw.Draw(screenshot)
