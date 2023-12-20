@@ -1,8 +1,9 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, traceback, shutil
+import os, traceback, shutil, hashlib
 from flask import Flask, request, jsonify, send_from_directory
+from flask_caching import Cache
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 from flask_cors import CORS
@@ -12,6 +13,7 @@ from datetime import datetime
 load_dotenv()
 
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
@@ -97,6 +99,10 @@ def process_page_with_ocr(page):
     except Exception as e:
         print(f"Tesseract not found. Please ensure it's installed. Details: {e}")                  
             
+def hash_file(file_content):
+    hasher = hashlib.sha1()
+    hasher.update(file_content)
+    return hasher.hexdigest()
     
 @app.route('/assets/<filename>')
 def serve_image(filename):
@@ -126,88 +132,101 @@ def search_pdf():
                                 os.rmdir(dir_path)
                     except Exception as e:
                         return jsonify({'error': f'Error clearing assets folder: {str(e)}'}), 500
-              
-            matches = []  # Stores matched pages and text
-            screenshots = []  # Stores screenshot file paths
 
-            pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
+            # Calculate hash of the PDF content
+            pdf_content_hash = hash_file(pdf_path)
 
-            for page_number in range(pdf_document.page_count):
-                page = pdf_document.load_page(page_number)
-                try:
-                    text = page.get_text()
-                    print('nonocr')
-                    # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
-                    if not text.strip():
-                        print('ocr')
-                        text = process_page_with_ocr(page)
-                        print(text)
-                except Exception as e:
-                    print(e)
-                    return jsonify({'error': 'Error parsing PDF'}), 500
+            # Check the cache for existing results
+            cache_key = f'{pdf_content_hash}_{request.form["searchPhrase"]}'
+            cached_results = cache.get(cache_key)
 
-                # Initialize a flag to check if a match is found
-                match_found = False
+            if cached_results:
+                return cached_results
+            else:
+                matches = []  # Stores matched pages and text
+                screenshots = []  # Stores screenshot file paths
 
-                # Process the text content dynamically (replace this with your data source)
-                # In this example, we split the text into words and process each word
-                words = text.split()
-                
-                for word in words:
-                    # Calculate the similarity score between search_phrase and the word
-                    similarity_score = fuzz.partial_ratio(search_phrase, word)
+                pdf_document = fitz.open(stream=pdf_path, filetype="pdf")
 
-                    # Set a minimum similarity score threshold (adjust as needed)
-                    min_similarity_score = 80
+                for page_number in range(pdf_document.page_count):
+                    page = pdf_document.load_page(page_number)
+                    try:
+                        text = page.get_text()
+                        print('nonocr')
+                        # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
+                        if not text.strip():
+                            print('ocr')
+                            text = process_page_with_ocr(page)
+                            print(text)
+                    except Exception as e:
+                        print(e)
+                        return jsonify({'error': 'Error parsing PDF'}), 500
 
-                    if similarity_score >= min_similarity_score:
-                        match_found = True
-                        break  # Stop searching once a match is found
+                    # Initialize a flag to check if a match is found
+                    match_found = False
 
-                if match_found:
-                    matches.append((page_number, text))
-
-            # if there's nothing in matches array, stop execution and print no matches found
-            if not matches:
-                return jsonify({'error': 'No matches found'}), 500     
-
-            for match_page_number, match_text in matches:
-                    page = pdf_document.load_page(match_page_number)
-                    img = page.get_pixmap()
-
-                    width = img.width
-                    height = img.height
-
-                    screenshot = Image.frombytes("RGB", [width, height], img.samples)
-                    # Generate unique filename for each screenshot
-                    timestamp = int(datetime.now().timestamp())
-                    screenshot_filename = f"match_page_{match_page_number + 1}_{str(timestamp)}.png"
-                    screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
-                    print(screenshot_filepath)
-                    draw = ImageDraw.Draw(screenshot)
-                    text_instances = []
-                    text_instances_ocr = ''
-                    if page.search_for(search_phrase):
-                        text_instances = page.search_for(search_phrase)
-                    else:
-                        text_instances_ocr = process_page_with_ocr(page)
-                
-                    screenshot.save(screenshot_filepath)
-                    # Highlight near matches in the screenshot
-                    if len(text_instances) > 0:
-                        for inst in text_instances:
-                            x0, y0, x1, y1 = inst
-                            draw.rectangle([x0, y0, x1, y1], outline="red")
-                        screenshot.save(screenshot_filepath)
-                    elif text_instances_ocr:
-                        highlight_exact_matches(screenshot_filepath, search_phrase, text_instances_ocr)
-                    else:
-                        highlight_exact_matches(screenshot_filepath, search_phrase, match_text)
+                    # Process the text content dynamically (replace this with your data source)
+                    # In this example, we split the text into words and process each word
+                    words = text.split()
                     
-                    screenshots.append(screenshot_filepath)
+                    for word in words:
+                        # Calculate the similarity score between search_phrase and the word
+                        similarity_score = fuzz.partial_ratio(search_phrase, word)
+
+                        # Set a minimum similarity score threshold (adjust as needed)
+                        min_similarity_score = 80
+
+                        if similarity_score >= min_similarity_score:
+                            match_found = True
+                            break  # Stop searching once a match is found
+
+                    if match_found:
+                        matches.append((page_number, text))
+
+                # if there's nothing in matches array, stop execution and print no matches found
+                if not matches:
+                    return jsonify({'error': 'No matches found'}), 500     
+
+                for match_page_number, match_text in matches:
+                        page = pdf_document.load_page(match_page_number)
+                        img = page.get_pixmap()
+
+                        width = img.width
+                        height = img.height
+
+                        screenshot = Image.frombytes("RGB", [width, height], img.samples)
+                        # Generate unique filename for each screenshot
+                        timestamp = int(datetime.now().timestamp())
+                        screenshot_filename = f"match_page_{match_page_number + 1}_{str(timestamp)}.png"
+                        screenshot_filepath = os.path.join(app.config['UPLOAD_FOLDER'], screenshot_filename)
+                        print(screenshot_filepath)
+                        draw = ImageDraw.Draw(screenshot)
+                        text_instances = []
+                        text_instances_ocr = ''
+                        if page.search_for(search_phrase):
+                            text_instances = page.search_for(search_phrase)
+                        else:
+                            text_instances_ocr = process_page_with_ocr(page)
+                    
+                        screenshot.save(screenshot_filepath)
+                        # Highlight near matches in the screenshot
+                        if len(text_instances) > 0:
+                            for inst in text_instances:
+                                x0, y0, x1, y1 = inst
+                                draw.rectangle([x0, y0, x1, y1], outline="red")
+                            screenshot.save(screenshot_filepath)
+                        elif text_instances_ocr:
+                            highlight_exact_matches(screenshot_filepath, search_phrase, text_instances_ocr)
+                        else:
+                            highlight_exact_matches(screenshot_filepath, search_phrase, match_text)
+                        
+                        screenshots.append(screenshot_filepath)
+                    
+                pdf_document.close()
                 
-            pdf_document.close()
-            return jsonify({"matches": matches, "screenshots": screenshots})
+                cache.set(cache_key, {'matches': matches, 'screenshots': screenshots}, timeout=None)
+
+                return jsonify({"matches": matches, "screenshots": screenshots})
         except Exception as e:
             # Log the exception details
             print(f"Exception: {e}")
