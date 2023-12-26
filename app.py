@@ -2,18 +2,22 @@
 from fuzzywuzzy import fuzz
 import pytesseract
 import os, traceback, shutil, hashlib
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_caching import Cache
 import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime
+import secrets
 
 load_dotenv()
 
 app = Flask(__name__)
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+# Set session secret key
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
@@ -103,7 +107,8 @@ def hash_file(file_content):
     hasher = hashlib.sha1()
     hasher.update(file_content)
     return hasher.hexdigest()
-    
+
+
 @app.route('/assets/<filename>')
 def serve_image(filename):
     # Serve image from the specified directory
@@ -135,9 +140,11 @@ def search_pdf():
 
             # Calculate hash of the PDF content
             pdf_content_hash = hash_file(pdf_path)
-
+                        
             # Check the cache for existing results
             cache_key = f'{pdf_content_hash}_{request.form["searchPhrase"]}'
+            cache.clear()
+            
             cached_results = cache.get(cache_key)
 
             if cached_results:
