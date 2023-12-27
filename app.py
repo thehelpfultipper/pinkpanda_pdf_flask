@@ -18,17 +18,16 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # Set session secret key
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+# Set absolute path for assets folder
+app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH", "assets")
 
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
-    # Set absolute path for assets folder
-    app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH")
     # Specify the path to the Tesseract executable
     pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
-
     CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 else:
-    app.config['UPLOAD_FOLDER'] = 'assets'
+    # app.config['UPLOAD_FOLDER'] = 'assets'
     pytesseract.pytesseract.tesseract_cmd = os.getenv("LOCAL_TESSERACT_PATH")
     CORS(app)
 
