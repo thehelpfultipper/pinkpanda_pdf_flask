@@ -187,8 +187,21 @@ def search_pdf():
                         min_similarity_score = 80
 
                         if similarity_score >= min_similarity_score:
-                            match_found = True
-                            break  # Stop searching once a match is found
+                            consecutive_match_count = 0
+                            search_phrase_index = 0
+
+                            for char in word:
+                                if search_phrase_index < len(search_phrase) and char == search_phrase[search_phrase_index]:
+                                    consecutive_match_count += 1
+                                    search_phrase_index += 1
+                                else:
+                                    consecutive_match_count = 0
+                            
+                            # Check if there are at least 3 consecutive matching letters
+                                if consecutive_match_count >= 3:
+                                    # print('Word: ' + word + ' ----- score: ' + str(similarity_score))
+                                    match_found = True
+                                    break  # Stop searching once a match is found
 
                     if match_found:
                         matches.append((page_number, text))
