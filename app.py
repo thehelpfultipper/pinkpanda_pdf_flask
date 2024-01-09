@@ -9,7 +9,6 @@ from PIL import Image, ImageDraw
 from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime
-import secrets
 
 load_dotenv()
 
@@ -38,10 +37,16 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Find the path to the Tesseract executable
 try:
     tesseract_path = shutil.which("tesseract")
+    tessdata_path = shutil.which("tessdata")
     if tesseract_path:
         print("Path to Tesseract executable:", tesseract_path)
     else:
         print("Tesseract executable not found.")
+
+    if tessdata_path:
+        print("Path to Tessdata:", tessdata_path)
+    else:
+        print("Tessdata not found.")
 except Exception as e:
     print("Error:", str(e))
 
@@ -171,8 +176,7 @@ def search_pdf():
                     # Initialize a flag to check if a match is found
                     match_found = False
 
-                    # Process the text content dynamically (replace this with your data source)
-                    # In this example, we split the text into words and process each word
+                    # Process the text content dynamically 
                     words = text.split()
                     
                     for word in words:
