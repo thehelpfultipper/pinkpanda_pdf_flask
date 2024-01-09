@@ -176,8 +176,11 @@ def search_pdf():
                     # Initialize a flag to check if a match is found
                     match_found = False
 
-                    # Process the text content dynamically 
-                    words = text.split()
+                    if text is not None and text.strip():
+                        # Process the text content dynamically 
+                        words = text.split()
+                    else:
+                        print("No text to split.")
                     
                     for word in words:
                         # Calculate the similarity score between search_phrase and the word
