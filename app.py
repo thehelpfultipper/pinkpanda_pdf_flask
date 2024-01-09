@@ -24,11 +24,9 @@ app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH", "assets")
 if os.environ.get('RENDER') == 'true':
     # Specify the path to the Tesseract executable
     pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
-    app.config['TESSDATA_PREFIX'] = os.getenv("RENDER_TESSDATA_PREFIX")
     CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 else:
     pytesseract.pytesseract.tesseract_cmd = os.getenv("LOCAL_TESSERACT_PATH")
-    app.config['TESSDATA_PREFIX'] = os.getenv("LOCAL_TESSDATA_PREFIX")
     CORS(app)
 
 # Ensure the upload folder exists
