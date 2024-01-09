@@ -96,7 +96,7 @@ def process_page_with_ocr(page):
         image_pil = Image.frombytes("RGB", (image.width, image.height), image.samples)
 
         # Use pytesseract to perform OCR on the image
-        ocr_text = pytesseract.image_to_string(image_pil, lang='eng')
+        ocr_text = pytesseract.image_to_string(image_pil)
 
         return ocr_text  
     except Exception as e:
