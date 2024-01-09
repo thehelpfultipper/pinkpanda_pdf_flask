@@ -24,10 +24,11 @@ app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH", "assets")
 if os.environ.get('RENDER') == 'true':
     # Specify the path to the Tesseract executable
     pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
+    app.config['TESSDATA_PREFIX'] = os.getenv("RENDER_TESSDATA_PREFIX")
     CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 else:
-    # app.config['UPLOAD_FOLDER'] = 'assets'
     pytesseract.pytesseract.tesseract_cmd = os.getenv("LOCAL_TESSERACT_PATH")
+    app.config['TESSDATA_PREFIX'] = os.getenv("LOCAL_TESSDATA_PREFIX")
     CORS(app)
 
 # Ensure the upload folder exists
@@ -37,16 +38,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Find the path to the Tesseract executable
 try:
     tesseract_path = shutil.which("tesseract")
-    tessdata_path = shutil.which("tessdata")
     if tesseract_path:
         print("Path to Tesseract executable:", tesseract_path)
     else:
         print("Tesseract executable not found.")
-
-    if tessdata_path:
-        print("Path to Tessdata:", tessdata_path)
-    else:
-        print("Tessdata not found.")
 except Exception as e:
     print("Error:", str(e))
 
