@@ -1,7 +1,7 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, traceback, shutil, hashlib, subprocess
+import os, traceback, shutil, hashlib
 from flask import Flask, request, jsonify, send_from_directory, session
 from flask_caching import Cache
 import fitz  # PyMuPDF
@@ -38,6 +38,18 @@ try:
     tesseract_path = shutil.which("tesseract")
     if tesseract_path:
         print("Path to Tesseract executable:", tesseract_path)
+
+        # Get the directory containing Tesseract executable
+        tesseract_directory = os.path.dirname(tesseract_path)
+
+        # List contents of the directory
+        directory_contents = os.listdir(tesseract_directory)
+
+        print("\nContents of Tesseract directory:")
+        for entry in directory_contents:
+            entry_path = os.path.join(tesseract_directory, entry)
+            entry_type = "Directory" if os.path.isdir(entry_path) else "File"
+            print(f"{entry_type}: {entry}")
     else:
         print("Tesseract executable not found.")
 except Exception as e:
@@ -104,23 +116,6 @@ def hash_file(file_content):
     hasher = hashlib.sha1()
     hasher.update(file_content)
     return hasher.hexdigest()
-
-def find_tessdata_directory():
-    try:
-        # Run the 'find' command
-        command = ["find", "/", "-type", "d", "-name", "tessdata", "2>/dev/null"]
-        result = subprocess.check_output(command, shell=True).decode("utf-8")
-
-        # Split the result into lines and return the first line (if any)
-        lines = result.strip().split('\n')
-        return lines[0] if lines else None
-
-    except subprocess.CalledProcessError as e:
-        return f"Error running 'find' command: {e}"
-
-# Print the tessdata directory to the logs
-tessdata_directory = find_tessdata_directory()
-print(f"Tessdata directory: {tessdata_directory}")
 
 @app.route('/assets/<filename>')
 def serve_image(filename):
