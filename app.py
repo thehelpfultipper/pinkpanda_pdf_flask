@@ -107,22 +107,18 @@ def hash_file(file_content):
 
 def find_tessdata_directory():
     try:
-        # Get the path to the tesseract binary
-        tesseract_path = subprocess.check_output(["which", "tesseract"]).decode().strip()
+        # Run the 'find' command
+        command = ["find", "/", "-type", "d", "-name", "tessdata", "2>/dev/null"]
+        result = subprocess.check_output(command, shell=True).decode("utf-8")
 
-        # Assume tessdata directory is in the same directory as tesseract binary
-        tessdata_directory = os.path.join(os.path.dirname(tesseract_path), "tessdata")
+        # Split the result into lines and return the first line (if any)
+        lines = result.strip().split('\n')
+        return lines[0] if lines else None
 
-        if os.path.isdir(tessdata_directory):
-            return tessdata_directory
-        else:
-            return None
+    except subprocess.CalledProcessError as e:
+        return f"Error running 'find' command: {e}"
 
-    except Exception as e:
-        print(f"Error finding tessdata directory: {e}")
-        return None
-
-# Example usage
+# Print the tessdata directory to the logs
 tessdata_directory = find_tessdata_directory()
 print(f"Tessdata directory: {tessdata_directory}")
 
