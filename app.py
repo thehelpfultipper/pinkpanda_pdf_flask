@@ -42,20 +42,17 @@ try:
         result = subprocess.check_output(["find", "/", "-type", "d", "-name", "tessdata", "2>/dev/null"], shell=True).decode("utf-8")
         print("Tessdata directories found:", result.strip())
 
-        result_2 = subprocess.check_output(["find", "/", "-type", "d", "-name", "share", "2>/dev/null"], shell=True).decode("utf-8")
-        print("Tessdata directories found:", result_2.strip())
-
         # Get the directory containing Tesseract executable
-        # tesseract_directory = os.path.dirname(tesseract_path)
+        tesseract_directory = os.path.dirname('/usr/bin/')
 
-        # # List contents of the directory
-        # directory_contents = os.listdir(tesseract_directory)
+        # List contents of the directory
+        directory_contents = os.listdir(tesseract_directory)
 
-        # print("\nContents of Tesseract directory:")
-        # for entry in directory_contents:
-        #     entry_path = os.path.join(tesseract_directory, entry)
-        #     entry_type = "Directory" if os.path.isdir(entry_path) else "File"
-        #     print(f"{entry_type}: {entry}")
+        print("\nContents of USRBIN directory:")
+        for entry in directory_contents:
+            entry_path = os.path.join(tesseract_directory, entry)
+            entry_type = "Directory" if os.path.isdir(entry_path) else "File"
+            print(f"{entry_type}: {entry}")
     else:
         print("Tesseract executable not found.")
 except Exception as e:
