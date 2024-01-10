@@ -216,7 +216,7 @@ def search_pdf():
                                     match_found = True
                                     break  # Stop searching once a match is found
 
-                    if match_found:
+                    if match_found and text is not None:
                         matches.append((page_number, text))
 
                 # if there's nothing in matches array, stop execution and print no matches found
