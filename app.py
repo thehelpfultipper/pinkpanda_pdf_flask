@@ -1,7 +1,7 @@
 # backend/app.py
 from fuzzywuzzy import fuzz
 import pytesseract
-import os, traceback, shutil, hashlib
+import os, traceback, shutil, hashlib, subprocess
 from flask import Flask, request, jsonify, send_from_directory, session
 from flask_caching import Cache
 import fitz  # PyMuPDF
@@ -105,6 +105,26 @@ def hash_file(file_content):
     hasher.update(file_content)
     return hasher.hexdigest()
 
+def find_tessdata_directory():
+    try:
+        # Get the path to the tesseract binary
+        tesseract_path = subprocess.check_output(["which", "tesseract"]).decode().strip()
+
+        # Assume tessdata directory is in the same directory as tesseract binary
+        tessdata_directory = os.path.join(os.path.dirname(tesseract_path), "tessdata")
+
+        if os.path.isdir(tessdata_directory):
+            return tessdata_directory
+        else:
+            return None
+
+    except Exception as e:
+        print(f"Error finding tessdata directory: {e}")
+        return None
+
+# Example usage
+tessdata_directory = find_tessdata_directory()
+print(f"Tessdata directory: {tessdata_directory}")
 
 @app.route('/assets/<filename>')
 def serve_image(filename):
