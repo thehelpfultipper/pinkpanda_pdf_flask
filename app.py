@@ -43,12 +43,12 @@ try:
         print("Tessdata directories found:", result.strip())
 
         # Get the directory containing Tesseract executable
-        tesseract_directory = os.path.dirname('/usr/bin/')
+        tesseract_directory = os.path.dirname('/usr/bin/combine_tessdata')
 
         # List contents of the directory
         directory_contents = os.listdir(tesseract_directory)
 
-        print("\nContents of USRBIN directory:")
+        print("\nContents of combine_tessdata directory:")
         for entry in directory_contents:
             entry_path = os.path.join(tesseract_directory, entry)
             entry_type = "Directory" if os.path.isdir(entry_path) else "File"
