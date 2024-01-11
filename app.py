@@ -22,13 +22,14 @@ app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH", "assets")
 
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
+    # Configure Tesseract data dir
+    tesseract_data_dir = os.getenv("RENDER_TESSERACT_PATH")
     # Specify the path to the Tesseract executable
-    pytesseract.pytesseract.tesseract_cmd = os.getenv("RENDER_TESSERACT_PATH")
-    app.config['TESSDATA_PREFIX'] = os.getenv("RENDER_TESSDATA_PREFIX")
+    pytesseract.pytesseract.tesseract_cmd = tesseract_data_dir
     CORS(app, origins=["https://thehelpfultipper.github.io", "https://thehelpfultipper.github.io/pinkpanda_pdf"])
 else:
-    pytesseract.pytesseract.tesseract_cmd = os.getenv("LOCAL_TESSERACT_PATH")
-    app.config['TESSDATA_PREFIX'] = os.getenv("LOCAL_TESSDATA_PREFIX")
+    tesseract_data_dir = os.getenv("LOCAL_TESSERACT_PATH")
+    pytesseract.pytesseract.tesseract_cmd = tesseract_data_dir
     CORS(app)
 
 # Ensure the upload folder exists
@@ -36,14 +37,14 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Find the path to the Tesseract executable
-try:
-    tesseract_path = shutil.which("tesseract")
-    if tesseract_path:
-        print("Path to Tesseract executable:", tesseract_path)
-    else:
-        print("Tesseract executable not found.")
-except Exception as e:
-    print("Error:", str(e))
+# try:
+#     tesseract_path = shutil.which("tesseract")
+#     if tesseract_path:
+#         print("Path to Tesseract executable:", tesseract_path)
+#     else:
+#         print("Tesseract executable not found.")
+# except Exception as e:
+#     print("Error:", str(e))
 
 def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     """
@@ -87,7 +88,7 @@ def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     # Save the modified screenshot
     img.save(screenshot, format="PNG")
 
-def process_page_with_ocr(page):
+def process_page_with_ocr(page, tesseract_data_dir):
     try:
         # Convert the page to an image using PyMuPDF
         image = page.get_pixmap()
@@ -95,8 +96,19 @@ def process_page_with_ocr(page):
         # Convert the image to a format that can be processed by pytesseract
         image_pil = Image.frombytes("RGB", (image.width, image.height), image.samples)
 
+        # Specify tesseract data dir
+        config = f'--tessdata-dir {tesseract_data_dir}'
         # Use pytesseract to perform OCR on the image
-        ocr_text = pytesseract.image_to_string(image_pil)
+        ocr_text = pytesseract.image_to_string(image_pil, config=config)
+
+        # VERIFICATION
+        # Print the Tesseract version and configuration
+        print("Tesseract Version:", pytesseract.get_tesseract_version())
+        print("Tesseract Configuration:", pytesseract.get_tesseract_config())
+
+        # Print the path to eng.traineddata
+        eng_traineddata_path = f'{tesseract_data_dir}/tessdata/eng.traineddata'
+        print("Path to eng.traineddata:", eng_traineddata_path)
 
         return ocr_text  
     except Exception as e:
@@ -161,7 +173,7 @@ def search_pdf():
                         # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
                         if not text.strip():
                             print('ocr')
-                            text = process_page_with_ocr(page)
+                            text = process_page_with_ocr(page, tesseract_data_dir)
                             print(text)
                     except Exception as e:
                         print(e)
@@ -226,7 +238,7 @@ def search_pdf():
                         if page.search_for(search_phrase):
                             text_instances = page.search_for(search_phrase)
                         else:
-                            text_instances_ocr = process_page_with_ocr(page)
+                            text_instances_ocr = process_page_with_ocr(page, tesseract_data_dir)
                     
                         screenshot.save(screenshot_filepath)
                         # Highlight near matches in the screenshot
