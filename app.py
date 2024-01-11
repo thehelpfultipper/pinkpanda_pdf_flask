@@ -22,7 +22,6 @@ app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER_PATH", "assets")
 
 # Check env for correct variables
 if os.environ.get('RENDER') == 'true':
-    # Configure Tesseract data dir
     tesseract_data_dir = os.getenv("RENDER_TESSERACT_PATH")
     # Specify the path to the Tesseract executable
     pytesseract.pytesseract.tesseract_cmd = tesseract_data_dir
@@ -88,7 +87,7 @@ def highlight_exact_matches(screenshot, search_phrase, near_matches_text):
     # Save the modified screenshot
     img.save(screenshot, format="PNG")
 
-def process_page_with_ocr(page, tesseract_data_dir):
+def process_page_with_ocr(page):
     try:
         # Convert the page to an image using PyMuPDF
         image = page.get_pixmap()
@@ -96,19 +95,8 @@ def process_page_with_ocr(page, tesseract_data_dir):
         # Convert the image to a format that can be processed by pytesseract
         image_pil = Image.frombytes("RGB", (image.width, image.height), image.samples)
 
-        # Specify tesseract data dir
-        config = f'--tessdata-dir {tesseract_data_dir}'
         # Use pytesseract to perform OCR on the image
-        ocr_text = pytesseract.image_to_string(image_pil, config=config)
-
-        # VERIFICATION
-        # Print the Tesseract version and configuration
-        print("Tesseract Version:", pytesseract.get_tesseract_version())
-        print("Tesseract Configuration:", pytesseract.get_tesseract_config())
-
-        # Print the path to eng.traineddata
-        eng_traineddata_path = f'{tesseract_data_dir}/tessdata/eng.traineddata'
-        print("Path to eng.traineddata:", eng_traineddata_path)
+        ocr_text = pytesseract.image_to_string(image_pil)
 
         return ocr_text  
     except Exception as e:
@@ -173,7 +161,7 @@ def search_pdf():
                         # If PyMuPDF extraction is unsuccessful (returns an empty string), try OCR (optical character recognition)
                         if not text.strip():
                             print('ocr')
-                            text = process_page_with_ocr(page, tesseract_data_dir)
+                            text = process_page_with_ocr(page)
                             print(text)
                     except Exception as e:
                         print(e)
@@ -238,7 +226,7 @@ def search_pdf():
                         if page.search_for(search_phrase):
                             text_instances = page.search_for(search_phrase)
                         else:
-                            text_instances_ocr = process_page_with_ocr(page, tesseract_data_dir)
+                            text_instances_ocr = process_page_with_ocr(page)
                     
                         screenshot.save(screenshot_filepath)
                         # Highlight near matches in the screenshot
