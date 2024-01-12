@@ -1,5 +1,5 @@
 # backend/app.py
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz, process
 import pytesseract
 import os, traceback, shutil, hashlib, subprocess
 from flask import Flask, request, jsonify, send_from_directory, session
@@ -175,36 +175,24 @@ def search_pdf():
                         words = text.split()
                     else:
                         print("No text to split.")
-                    
-                    for word in words:
-                        # Calculate the similarity score between search_phrase and the word
-                        similarity_score = fuzz.partial_ratio(search_phrase, word)
 
-                        # Set a minimum similarity score threshold (adjust as needed)
-                        min_similarity_score = 80
-
-                        if similarity_score >= min_similarity_score:
-                            consecutive_match_count = 0
-                            search_phrase_index = 0
-
-                            for char in word:
-                                if search_phrase_index < len(search_phrase) and char == search_phrase[search_phrase_index]:
-                                    consecutive_match_count += 1
-                                    search_phrase_index += 1
-                                else:
-                                    consecutive_match_count = 0
-                            
-                            # Check if there are at least 3 consecutive matching letters
-                                if consecutive_match_count >= 3:
-                                    # print('Word: ' + word + ' ----- score: ' + str(similarity_score))
-                                    match_found = True
-                                    break  # Stop searching once a match is found
+                    search_words = search_phrase.lower().split()
+                    min_match_threshold = 80
+                    for i in range(len(words) - len(search_words) + 1):
+                        word_subset = words[i:i+len(search_words)]
+                        combined_word = ' '.join(word_subset)
+                        
+                        if fuzz.partial_ratio(search_phrase, combined_word) >= min_match_threshold and \
+           fuzz.partial_ratio(' '.join(search_words), combined_word) >= min_match_threshold:
+                            match_found = True
+                            break
 
                     if match_found and text is not None:
                         matches.append((page_number, text))
 
                 # if there's nothing in matches array, stop execution and print no matches found
                 if not matches:
+                    print('no matches')
                     return jsonify({'error': 'No matches found'}), 500     
 
                 for match_page_number, match_text in matches:
